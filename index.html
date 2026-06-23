@@ -58,7 +58,7 @@ const DAY = 5;
 
 let timeline = [];
 const GAS_URL =
-"https://script.google.com/macros/s/AKfycbykXLPo7yOkRlGzwbBA8leKtM4_Qqq_wF9uLB9GwVDpDaYfkJb47is2StaHIp-OLpiR/exec";
+"https://script.google.com/macros/s/AKfycbwj995Kx89a03AbUmvUfjdOJRjVGAQKiJvt1zoBC6myGpVMduFg2la6dAoUtqiO1CZy/exec";
 
 let participant_id = "";
 let study_start = "";
@@ -99,7 +99,9 @@ timeline.push({
 
         participant_id: participant_id,
 
-        day: DAY
+        day: DAY,
+
+         word_order:  word_order
 
       })
 
@@ -118,7 +120,7 @@ timeline.push({
   type: jsPsychHtmlButtonResponse,
 
   stimulus: `
-    <div class="center-text"
+   <div class="center-text"
          style="font-size:18px; line-height:1.8;">
       これから単語が1語ずつ表示されます。<br>
       後ほどテストを行うので、<br>
@@ -138,21 +140,22 @@ timeline.push({
 ------------------------ */
 
 let study_words = [
-"離婚",
-"粗野",
-"飢餓",
-"狂人",
-"詐欺",
-"歴史",
-"住民",
-"幼児",
-"瞬間",
-"笑止",
-"動物",
-"庭園",
-"純真",
-"美人",
-"音楽"
+{id: 121, word: "離婚"},
+{id: 122, word: "粗野"},
+{id: 123, word: "飢餓"},
+{id: 124, word: "狂人"},
+{id: 125, word: "詐欺"},
+{id: 126, word: "歴史"},
+{id: 127, word: "住民"},
+{id: 128, word: "幼児"},
+{id: 129, word: "瞬間"},
+{id: 130, word: "笑止"},
+{id: 131, word: "動物"},
+{id: 132, word: "庭園"},
+{id: 133, word: "純真"},
+{id: 134, word: "美人"},
+{id: 135, word: "音楽"}
+
 ];
 
 /* ------------------------
@@ -160,13 +163,16 @@ let study_words = [
 ------------------------ */
 
 study_words = jsPsych.randomization.shuffle(study_words);
-
+const word_order = study_words.map((item, index) => ({
+  serial_position: index + 1,
+  word_id: item.id,
+  word: item.word
+}));
 /* ------------------------
    単語提示フェーズ
 ------------------------ */
 
-study_words.forEach(function(word){
-
+study_words.forEach(function(item, index){
   /* 注視点 ＋ */
 
   timeline.push({
@@ -195,13 +201,18 @@ study_words.forEach(function(word){
     stimulus: `
       <div class="center-text"
            style="font-size:100px;">
-        ${word}
+        ${item.word}
       </div>
     `,
 
     choices: "NO_KEYS",
 
-    trial_duration: 5000
+    trial_duration: 5000,
+     data: {
+      word_id: item.id,
+      word: item.word,
+      serial_position: index + 1
+    }
 
   });
 
@@ -216,7 +227,7 @@ timeline.push({
   type: jsPsychHtmlKeyboardResponse,
 
   stimulus: `
-  <div class="center-text"
+    <div class="center-text"
          style="font-size:18px; line-height:1.8;">
       ご協力ありがとうございました。<br><br>
       <b>ブラウザの「戻る」操作を行い、<br>
